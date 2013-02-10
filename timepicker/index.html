@@ -22,9 +22,9 @@
 		<script>		
 			
 			var timepicker = function(name, container, onchange, restrictions){
+				var self = this;
 				var container = $(container); // jquery selector, .class, #id, dom object
 				var onchange = (onchange!=undefined)?onchange:function(){};
-				var restrictions = (restrictions!=undefined)?restrictions:false;
 				var times = ['',
 							 '12:00','12:30',
 							 '1:00','1:30',
@@ -44,6 +44,7 @@
 				var timeSelect;
 				var suffixSelect;
 				
+				self.restrictions = (restrictions!=undefined)?restrictions:false;
 				
 				// Methods
 				var makeSuffixSelect = function(){
@@ -59,6 +60,8 @@
 				
 				var setTimeSelectOptions = function(suffix){
 					timeSelect.html('');
+					var restrictions = self.restrictions;
+					
 					$.each(times, function(i,item){
 						
 						var append = true;
@@ -98,15 +101,16 @@
 					return timeSelect.val();
 				}
 				var setValue = function(value){
-					var time = value.split(" ")[0];
 					var sufx = value.split(" ")[1];
-					timeSelect.val(time);
-					sufx.val(sufx);
+					suffixSelect.val(sufx);
+					suffixSelect.trigger('change');
+					timeSelect.val(value);
 				}
 				// start: 11:00 am
 				// end: 12:00 pm
-				var restrict = function(start,end){
-					restrictions = { start: start, end: end }
+				var setRestrictions = function(restrictions){
+					self.restrictions = restrictions;
+					suffixSelect.trigger('change');
 				}
 				
 				timeSelect = makeTimeSelect();
@@ -132,15 +136,17 @@
 				
 				this.getValue = getValue;
 				this.setValue = setValue;
-				this.restrict = restrict;
+				this.setRestrictions = setRestrictions;
 				
 				container.html('');
 				container.append(timeSelect).append(suffixSelect);
 			}
-			var tm1, tm2;
+			var tm1, tm2, tm3, tm4;
 			$(function(){
 				tm1 = new timepicker('inputname','#first-one',function(val){ console.log(val); });
 				tm2 = new timepicker('inputname2','#second-one',function(val){ console.log(val); }, { start:'11:00 am', end: '4:00 pm' });
+				tm3 = new timepicker('inputname3','#third-one',function(val){ tm4.setRestrictions({ start: val, end: '12:01 pm' }); });
+				tm4 = new timepicker('inputname4','#third-oneTwo',function(val){ console.log(val); });
 			});
 			
 		</script>
@@ -163,7 +169,14 @@
 				<span id="second-one"></span>
 				<button onclick="$('#time-value-2').html(tm2.getValue())">get value</button>
 				<small>(<span id="time-value-2"></span>)</small>
-				<pre class="prettyprint">tm1 <k>= new</k> timepicker(<st>'inputname'</st>,<st>'#first-one'</st>,<k>function</k>(<v>val</v>){ console.log(<v>val</v>); },{ start:<st>'11:00 am'</st>, end: <st>'4:00 pm'</st> });</pre>
+				<pre class="prettyprint">tm2 <k>= new</k> timepicker(<st>'inputname2'</st>,<st>'#second-one'</st>,<k>function</k>(<v>val</v>){ console.log(<v>val</v>); },{ start:<st>'11:00 am'</st>, end: <st>'4:00 pm'</st> });</pre>
+				
+				<h3>Restricted To From Example</h3>
+				<span id="third-one"></span> - <span id="third-oneTwo"></span>
+				<button onclick="$('#time-value-3').html(tm3.getValue()+' - '+tm4.getValue())">get value</button>
+				<small>(<span id="time-value-3"></span>)</small>
+				<pre class="prettyprint">tm3 <k>= new</k> timepicker(<st>'inputname3'</st>,<st>'#third-one'</st>,<k>function</k>(<v>val</v>){ tm4.setRestrictions({ start: <v>val</v>, end: <st>'12:01 pm'</st> }); });<br/>tm4 <k>= new</k> timepicker(<st>'inputname4'</st>,<st>'#third-oneTwo'</st>,<k>function</k>(<v>val</v>){ console.log(<v>val</v>); });</pre>
+			
 			</div>
 			<h3>Params <small> - timepicker(selectName,selector,onchange,restrictions);</small></h3>
 			<ul class="prm">
@@ -171,7 +184,13 @@
 				<li><label>selector:</label> The selector for the select element, uses jQuery select methods.</li>
 				<li><label>onchange:</label> Callback that fires when time is changed, has the argument of the value.</li>
 				<li><label>restriction:</label> This is an object to restrict the timepicker's options. { start: "time", end: "time"}</li>
-			</ul>			
+			</ul>
+			<h3>Methods <small> - getValue(), setValue(), setRestrictions()</small></h3>
+			<ul class="prm">
+				<li><label>getValue():</label> Return value, example: "11:30 am"</li>
+				<li><label>setValue():</label> Set's the value of the time picker</li>
+				<li><label>setRestrictions():</label> This set's restrictions and resets the time picker within the restricted time</li>
+			</ul>				
 			<h3>Requirements</h3>
 			<ul>
 				<li>jQuery, newest</li>
