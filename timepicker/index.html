@@ -94,8 +94,7 @@
 					}
 				}
 				var dateObject = function(timeObj){
-					var d = new Date();
-					return new Date(d.getMonth()+"-"+d.getDate()+"-"+d.getFullYear()+" "+timeObj.time+" "+timeObj.suffix);
+					return Date.parse('nov 9, 1989 '+timeObj.time+" "+timeObj.suffix);
 				}
 				var getValue = function(){
 					return timeSelect.val();
