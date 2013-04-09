@@ -102,8 +102,9 @@
 				var setValue = function(value){
 					var sufx = value.split(" ")[1];
 					suffixSelect.val(sufx);
-					suffixSelect.trigger('change');
-					timeSelect.val(value);
+					setTimeSelectOptions(sufx);
+		            timeSelect.val(value);
+		            timeSelect.trigger('change');
 				}
 				// start: 11:00 am
 				// end: 12:00 pm
