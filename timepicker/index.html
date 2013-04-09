@@ -99,13 +99,14 @@
 				var getValue = function(){
 					return timeSelect.val();
 				}
-				var setValue = function(value){
-					var sufx = value.split(" ")[1];
-					suffixSelect.val(sufx);
-					setTimeSelectOptions(sufx);
+				 var setValue = function (value) {
+		            var sufx = value.split(" ")[1];
+		            sufx = (sufx == undefined || jQuery.inArray(sufx, suffix) < 0) ? suffix[0] : sufx;
+		            suffixSelect.val(sufx);
+		            setTimeSelectOptions(sufx);
 		            timeSelect.val(value);
 		            timeSelect.trigger('change');
-				}
+		        }
 				// start: 11:00 am
 				// end: 12:00 pm
 				var setRestrictions = function(restrictions){
